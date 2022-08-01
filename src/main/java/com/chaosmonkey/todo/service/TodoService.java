@@ -2,9 +2,11 @@ package com.chaosmonkey.todo.service;
 
 import com.chaosmonkey.todo.dto.TodoRequest;
 import com.chaosmonkey.todo.dto.TodoResponse;
+import com.chaosmonkey.todo.exception.InvalidIdException;
 import com.chaosmonkey.todo.model.Todo;
 import com.chaosmonkey.todo.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,5 +30,15 @@ public class TodoService {
             responses.add(todo.generateResponse());
         });
         return responses;
+    }
+
+    public TodoResponse updateTodo(TodoRequest todoRequest, int id) {
+        Todo todo = getById(id);
+        todo.update(todoRequest);
+        return todoRepository.save(todo).generateResponse();
+    }
+
+    private Todo getById(int id) {
+        return todoRepository.findById(id).orElseThrow(InvalidIdException::new);
     }
 }

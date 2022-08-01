@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -56,5 +57,21 @@ class TodoServiceTest {
         List<TodoResponse> responses = todoService.getAllTodos();
 
         assertThat(responses, containsInAnyOrder(expectedList.stream().map(Todo::generateResponse).toArray()));
+    }
+
+    @Test
+    void shouldUpdateATodoWhenValidTodoObjectAndValidTodoIdIsGiven() {
+        TodoRequest todoRequest = new TodoRequest(
+                "To do", "or not to do, there is no try!", LocalDateTime.now().plusDays(4));
+        TodoRequest updatedTodoRequest = new TodoRequest(
+                "To do again", "or not to do again, there is no try!", LocalDateTime.now().plusDays(4));
+
+        Todo todo = new Todo(todoRequest);
+        Todo expectedTodo = new Todo(updatedTodoRequest);
+        doReturn(Optional.of(todo)).when(todoRepository).findById(1);
+        doReturn(expectedTodo).when(todoRepository).save(todo);
+        TodoResponse response = todoService.updateTodo(todoRequest, 1);
+
+        assertThat(response, is(equalTo(expectedTodo.generateResponse())));
     }
 }

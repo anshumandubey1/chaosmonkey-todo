@@ -37,12 +37,16 @@ public class Todo {
     private LocalDateTime completed_at;
 
     public Todo(TodoRequest todoRequest) {
-        title = todoRequest.getTitle();
-        description = todoRequest.getDescription();
-        deadline = todoRequest.getDeadline();
+        update(todoRequest);
     }
 
     public TodoResponse generateResponse() {
         return new TodoResponse(id, title, description, deadline, created_at, completed_at);
+    }
+
+    public void update(TodoRequest todoRequest) {
+        title = todoRequest.getTitle();
+        description = todoRequest.getDescription();
+        deadline = todoRequest.getDeadline();
     }
 }
