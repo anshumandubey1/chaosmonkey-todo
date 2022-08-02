@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "SERIAL PRIMARY KEY")
     private int id;
     @NotNull
     private String title;
