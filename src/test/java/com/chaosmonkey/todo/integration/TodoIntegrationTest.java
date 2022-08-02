@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -95,5 +96,15 @@ public class TodoIntegrationTest {
                                              .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                .andExpect(content().string(responseBody));
 
+    }
+
+    @Test
+    void shouldDeleteATodoWhenValidTodoIdIsGiven() throws Exception {
+        int id = 1;
+
+        doNothing().when(todoService).deleteTodo(id);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/todo/" + id + "/")).andExpect(status().isOk());
     }
 }
