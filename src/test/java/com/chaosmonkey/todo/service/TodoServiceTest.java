@@ -19,7 +19,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -73,5 +76,15 @@ class TodoServiceTest {
         TodoResponse response = todoService.updateTodo(todoRequest, 1);
 
         assertThat(response, is(equalTo(expectedTodo.generateResponse())));
+    }
+
+    @Test
+    void shouldDeleteATodoWhenValidTodoIdIsGiven() {
+        int id = 1;
+
+        doNothing().when(todoRepository).deleteById(id);
+        todoService.deleteTodo(id);
+
+        verify(todoRepository, times(1)).deleteById(id);
     }
 }

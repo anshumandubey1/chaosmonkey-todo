@@ -41,4 +41,8 @@ public class TodoService {
     private Todo getById(int id) {
         return todoRepository.findById(id).orElseThrow(InvalidIdException::new);
     }
+
+    public void deleteTodo(int id) {
+        todoRepository.deleteById(id);
+    }
 }
