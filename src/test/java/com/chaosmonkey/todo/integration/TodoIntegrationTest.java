@@ -75,4 +75,25 @@ public class TodoIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/todo/").accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk()).andExpect(content().string(responseBody));
     }
+
+    @Test
+    void shouldUpdateATodoWhenValidTodoObjectAndValidTodoIdIsGiven() throws Exception {
+        int id = 1;
+        TodoRequest todoRequest = new TodoRequest(
+                "To do again", "or not to do again, there is no try!", LocalDateTime.now().plusDays(4));
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String requestBody = mapper.writeValueAsString(todoRequest);
+        TodoResponse expectedTodoResponse = new Todo(todoRequest).generateResponse();
+        ResponseDataObject<TodoResponse> expectedResponse = new ResponseDataObject<>(true, expectedTodoResponse);
+        String responseBody = mapper.writeValueAsString(expectedResponse);
+
+        doReturn(expectedTodoResponse).when(todoService).updateTodo(todoRequest, id);
+
+        mockMvc.perform(
+                       MockMvcRequestBuilders.put("/todo/" + id + "/").contentType(MediaType.APPLICATION_JSON)
+                                             .content(requestBody)
+                                             .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+               .andExpect(content().string(responseBody));
+
+    }
 }
