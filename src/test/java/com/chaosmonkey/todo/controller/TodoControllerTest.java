@@ -43,14 +43,37 @@ class TodoControllerTest {
 
     @Test
     void shouldReturnListOfTodos() {
-        TodoResponse todo1 = new TodoResponse(1, "To do 1", "or not to do 1, there is no try!", LocalDateTime.now().plusDays(1), LocalDateTime.now(), null);
-        TodoResponse todo2 = new TodoResponse(1, "To do 2", "or not to do 2, there is no try!", LocalDateTime.now().plusDays(2), LocalDateTime.now(), null);
-        TodoResponse todo3 = new TodoResponse(1, "To do 3", "or not to do 3, there is no try!", LocalDateTime.now().plusDays(3), LocalDateTime.now(), null);
+        TodoResponse todo1 = new TodoResponse(
+                1, "To do 1", "or not to do 1, there is no try!", LocalDateTime.now().plusDays(1), LocalDateTime.now(),
+                null
+        );
+        TodoResponse todo2 = new TodoResponse(
+                1, "To do 2", "or not to do 2, there is no try!", LocalDateTime.now().plusDays(2), LocalDateTime.now(),
+                null
+        );
+        TodoResponse todo3 = new TodoResponse(
+                1, "To do 3", "or not to do 3, there is no try!", LocalDateTime.now().plusDays(3), LocalDateTime.now(),
+                null
+        );
 
         List<TodoResponse> expectedList = List.of(todo1, todo2, todo3);
         doReturn(expectedList).when(todoService).getAllTodos();
         ResponseEntity<ResponseDataObject<List<TodoResponse>>> response = todoController.list();
 
         assertThat(response.getBody().getData(), containsInAnyOrder(expectedList.toArray()));
+    }
+
+    @Test
+    void shouldUpdateATodoWhenValidTodoObjectAndValidTodoIdIsGiven() {
+        int id = 1;
+        TodoRequest todoRequest = new TodoRequest(
+                "To do again", "or not to do again, there is no try!", LocalDateTime.now().plusDays(4));
+
+
+        TodoResponse expectedTodo = new Todo(todoRequest).generateResponse();
+        doReturn(expectedTodo).when(todoService).updateTodo(todoRequest, id);
+        ResponseEntity<ResponseDataObject<TodoResponse>> response = todoController.update(id, todoRequest);
+
+        assertThat(response.getBody().getData(), is(equalTo(expectedTodo)));
     }
 }

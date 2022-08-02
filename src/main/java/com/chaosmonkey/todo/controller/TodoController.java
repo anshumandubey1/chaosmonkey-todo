@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +35,15 @@ public class TodoController {
     public ResponseEntity<ResponseDataObject<List<TodoResponse>>> list() {
         List<TodoResponse> todoResponses = todoService.getAllTodos();
         ResponseDataObject<List<TodoResponse>> response = new ResponseDataObject<>(true, todoResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDataObject<TodoResponse>> update(
+            @PathVariable int id, @RequestBody TodoRequest todoRequest
+    ) {
+        TodoResponse todoResponse = todoService.updateTodo(todoRequest, id);
+        ResponseDataObject<TodoResponse> response = new ResponseDataObject<>(true, todoResponse);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
