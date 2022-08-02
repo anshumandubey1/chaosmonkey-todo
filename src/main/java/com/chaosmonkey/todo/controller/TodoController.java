@@ -26,7 +26,7 @@ public class TodoController {
     TodoService todoService;
 
     @PostMapping("/")
-    public ResponseEntity<ResponseDataObject<TodoResponse>> create(TodoRequest todoRequest) {
+    public ResponseEntity<ResponseDataObject<TodoResponse>> create(@RequestBody TodoRequest todoRequest) {
         TodoResponse todoResponse = todoService.addTodo(todoRequest);
         ResponseDataObject<TodoResponse> response = new ResponseDataObject<>(true, todoResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

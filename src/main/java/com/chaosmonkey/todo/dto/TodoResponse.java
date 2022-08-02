@@ -1,5 +1,6 @@
 package com.chaosmonkey.todo.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +16,10 @@ public class TodoResponse {
     private int id;
     private String title;
     private String description;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime deadline;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime created_at;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime completed_at;
 }
