@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -51,5 +52,27 @@ public class TodoIntegrationTest {
                        MockMvcRequestBuilders.post("/todo/").contentType(MediaType.APPLICATION_JSON).content(requestBody)
                                              .accept(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                .andExpect(content().string(responseBody));
+    }
+
+    @Test
+    void shouldReturnListOfTodos() throws Exception {
+        TodoResponse todo1 = new TodoResponse(1, "To do 1", "or not to do 1, there is no try!",
+                                              LocalDateTime.now().plusDays(1), LocalDateTime.now(), null
+        );
+        TodoResponse todo2 = new TodoResponse(2, "To do 2", "or not to do 2, there is no try!",
+                                              LocalDateTime.now().plusDays(2), LocalDateTime.now(), null
+        );
+        TodoResponse todo3 = new TodoResponse(3, "To do 3", "or not to do 3, there is no try!",
+                                              LocalDateTime.now().plusDays(3), LocalDateTime.now(), null
+        );
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        List<TodoResponse> expectedList = List.of(todo1, todo2, todo3);
+        ResponseDataObject<List<TodoResponse>> response = new ResponseDataObject<>(true, expectedList);
+        String responseBody = mapper.writeValueAsString(response);
+
+        doReturn(expectedList).when(todoService).getAllTodos();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todo/").accept(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk()).andExpect(content().string(responseBody));
     }
 }
