@@ -7,6 +7,7 @@ import com.chaosmonkey.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,5 +46,11 @@ public class TodoController {
         TodoResponse todoResponse = todoService.updateTodo(todoRequest, id);
         ResponseDataObject<TodoResponse> response = new ResponseDataObject<>(true, todoResponse);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable int id) {
+        todoService.deleteTodo(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class TodoControllerTest {
@@ -43,17 +47,14 @@ class TodoControllerTest {
 
     @Test
     void shouldReturnListOfTodos() {
-        TodoResponse todo1 = new TodoResponse(
-                1, "To do 1", "or not to do 1, there is no try!", LocalDateTime.now().plusDays(1), LocalDateTime.now(),
-                null
+        TodoResponse todo1 = new TodoResponse(1, "To do 1", "or not to do 1, there is no try!",
+                                              LocalDateTime.now().plusDays(1), LocalDateTime.now(), null
         );
-        TodoResponse todo2 = new TodoResponse(
-                1, "To do 2", "or not to do 2, there is no try!", LocalDateTime.now().plusDays(2), LocalDateTime.now(),
-                null
+        TodoResponse todo2 = new TodoResponse(1, "To do 2", "or not to do 2, there is no try!",
+                                              LocalDateTime.now().plusDays(2), LocalDateTime.now(), null
         );
-        TodoResponse todo3 = new TodoResponse(
-                1, "To do 3", "or not to do 3, there is no try!", LocalDateTime.now().plusDays(3), LocalDateTime.now(),
-                null
+        TodoResponse todo3 = new TodoResponse(1, "To do 3", "or not to do 3, there is no try!",
+                                              LocalDateTime.now().plusDays(3), LocalDateTime.now(), null
         );
 
         List<TodoResponse> expectedList = List.of(todo1, todo2, todo3);
@@ -75,5 +76,16 @@ class TodoControllerTest {
         ResponseEntity<ResponseDataObject<TodoResponse>> response = todoController.update(id, todoRequest);
 
         assertThat(response.getBody().getData(), is(equalTo(expectedTodo)));
+    }
+
+    @Test
+    void shouldDeleteATodoWhenValidTodoIdIsGiven() {
+        int id = 1;
+
+        doNothing().when(todoService).deleteTodo(id);
+        ResponseEntity response = todoController.delete(id);
+
+        verify(todoService, times(1)).deleteTodo(id);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 }
